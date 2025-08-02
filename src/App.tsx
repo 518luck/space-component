@@ -5,7 +5,11 @@ import './App.css'
 function App() {
   return (
     <div>
-      <Space></Space>
+      <Space direction='vertical' align='start'>
+        <div>111</div>
+        <div>222</div>
+        <div>333</div>
+      </Space>
     </div>
   )
 }
