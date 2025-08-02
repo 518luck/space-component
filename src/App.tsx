@@ -1,15 +1,23 @@
 import Space from './Space'
+import { ConfigProvider } from './Space/ConfigProvider'
 
 import './App.css'
 
 function App() {
   return (
     <div>
-      <Space direction='vertical' align='start'>
-        <div>111</div>
-        <div>222</div>
-        <div>333</div>
-      </Space>
+      <ConfigProvider space={{ size: 20 }}>
+        <Space direction='horizontal'>
+          <div className='box'></div>
+          <div className='box'></div>
+          <div className='box'></div>
+        </Space>
+        <Space direction='vertical'>
+          <div className='box'></div>
+          <div className='box'></div>
+          <div className='box'></div>
+        </Space>
+      </ConfigProvider>
     </div>
   )
 }

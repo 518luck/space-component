@@ -1,6 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
 
+import { ConfigContext } from './ConfigProvider'
 import './index.scss'
 
 export type SizeType = 'small' | 'middle' | 'large' | number | undefined
@@ -15,16 +16,27 @@ export interface SpaceProps extends React.HTMLAttributes<HTMLDivElement> {
   wrap?: boolean
 }
 
+const spaceSize = {
+  small: 8,
+  middle: 16,
+  large: 24,
+}
+
+function getNumberSize(size: SizeType) {
+  return typeof size === 'string' ? spaceSize[size] : size || 0
+}
+
 const Space: React.FC<SpaceProps> = (props) => {
+  const { space } = React.useContext(ConfigContext)
   const {
     className,
     style,
     children,
-    // size = 'small',
+    size = space?.size || 'small',
     direction = 'horizontal',
     align,
-    // split,
-    // wrap = false,
+    split,
+    wrap = false,
     ...otherProps
   } = props
 
@@ -42,19 +54,42 @@ const Space: React.FC<SpaceProps> = (props) => {
     className
   )
 
+  /* eslint-disable */
   const nodes = childNodes.map((child: any, i) => {
+    /* eslint-enable */
     const key = (child && child.key) || `space-item-${i}`
 
     return (
-      <div className='space-item' key={key}>
-        {child}
-      </div>
+      <>
+        <div className='space-item' key={key}>
+          {child}
+        </div>
+        {i < childNodes.length && split && (
+          <span className={`${className}-split`} style={style}>
+            {split}
+          </span>
+        )}
+      </>
     )
   })
-  console.log('🚀 ~ Space ~ nodes:', nodes)
+
+  const otherStyles: React.CSSProperties = {}
+
+  const [horizontalSize, verticalSize] = React.useMemo(() => {
+    return (
+      (Array.isArray(size) ? size : [size, size]) as [SizeType, SizeType]
+    ).map((item) => getNumberSize(item))
+  }, [size])
+
+  otherStyles.columnGap = horizontalSize
+  otherStyles.rowGap = verticalSize
+
+  if (wrap) {
+    otherStyles.flexWrap = 'wrap'
+  }
 
   return (
-    <div className={cn} style={style} {...otherProps}>
+    <div className={cn} style={{ ...otherStyles, ...style }} {...otherProps}>
       {nodes}
     </div>
   )
